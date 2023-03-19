@@ -1,4 +1,5 @@
 local p = premake
+local project = p.project
 
 local vscode = p.modules.vscode
 
@@ -19,7 +20,9 @@ newaction {
     execute = function()
         p.escaper(vscode.jsonEsc)
 
-        _, ltp = vscode.locationsToProject(wks)
+        _, ltp = vscode.locationsToProject(wks, function(prj)
+            return (project.isc(prj) or project.iscpp(prj)) and prj.kind ~= p.NONE
+        end)
 
         for location, prjs in pairs(ltp) do
             vscode.generateLocation(location, prjs, ".vscode/c_cpp_properties.json", vscode.ccppproperties.generateCCPPProperties)

@@ -34,7 +34,7 @@ function vscode.generateLocation(location, prjs, ext, callback)
     end
 end
 
-function vscode.locationsToProject(wks)
+function vscode.locationsToProject(wks, filter)
     local iter
     if wks then
         local returned = false
@@ -52,11 +52,13 @@ function vscode.locationsToProject(wks)
     local n = 0
     for wks in iter do
         for prj in p.workspace.eachproject(wks) do
-            if not ltp[prj.location] then
-                ltp[prj.location] = {}
-                n = n + 1
+            if not filter or filter(prj) then
+                if not ltp[prj.location] then
+                    ltp[prj.location] = {}
+                    n = n + 1
+                end
+                table.insert(ltp[prj.location], prj)
             end
-            table.insert(ltp[prj.location], prj)
         end
     end
 
