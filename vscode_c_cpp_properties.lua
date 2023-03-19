@@ -9,6 +9,7 @@ ccppproperties.elements = {}
 ccppproperties.elements.configurations = function(cfg)
     return {
         ccppproperties.name,
+        ccppproperties.compilerPath,
         ccppproperties.flags,
         ccppproperties.intelliSenseMode,
         ccppproperties.includePath,
@@ -37,6 +38,16 @@ function ccppproperties.name(cfg, toolset)
         name = cfg.project.name .. "-" .. cfg.buildcfg
     end
     p.x("\"name\": \"%s\",", name)
+end
+
+function ccppproperties.compilerPath(cfg, toolset)
+    local tool = toolset.gettoolname(cfg, iif(p.languages.isc(cfg.language), "cc", "cxx"))
+    if tool then
+        local toolpath = os.pathsearch(tool, os.getenv("PATH"))
+        if toolpath then
+            p.x("\"compilerPath\": \"%s\",", toolpath .. '/' .. tool)
+        end
+    end
 end
 
 function ccppproperties.flags(cfg, toolset)
